@@ -1,0 +1,9 @@
+{
+  "name": "incident-dashboard-web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": { "dev": "vite --host 0.0.0.0", "build": "tsc -b && vite build" },
+  "dependencies": { "@vitejs/plugin-react": "latest", "vite": "latest", "react": "latest", "react-dom": "latest", "lucide-react": "latest" },
+  "devDependencies": { "typescript": "latest", "tailwindcss": "latest", "@tailwindcss/vite": "latest", "@types/react": "latest", "@types/react-dom": "latest" }
+}
+

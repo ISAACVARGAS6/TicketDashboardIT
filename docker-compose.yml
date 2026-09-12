@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Crea el archivo .env a partir de .env.example}
+      POSTGRES_USER: ${POSTGRES_USER:?Crea el archivo .env a partir de .env.example}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Crea el archivo .env a partir de .env.example}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend/IncidentDashboard.Api
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      Jwt__Key: ${JWT_KEY:?Crea el archivo .env a partir de .env.example}
+      Seed__AdminPassword: ${SEED_ADMIN_PASSWORD:?Crea el archivo .env a partir de .env.example}
+      Seed__TechnicianPassword: ${SEED_TECHNICIAN_PASSWORD:?Crea el archivo .env a partir de .env.example}
+      Seed__RequesterPassword: ${SEED_REQUESTER_PASSWORD:?Crea el archivo .env a partir de .env.example}
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
